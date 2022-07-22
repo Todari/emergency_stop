@@ -81,11 +81,14 @@ with mp_face_mesh.FaceMesh(
 
       #face director vector line
       cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(-nx*0.1+landmark_list[5][1]), int(ny*0.1+landmark_list[5][2])), (255,0,255), 2, cv2.LINE_4, 0)"""
-      
+
       face_reference = [(landmark_list[234][1]+landmark_list[454][1])/2, (landmark_list[234][2]+landmark_list[454][2])/2, (landmark_list[234][3] + landmark_list[454][3])/2]
       face_dir_vector = [landmark_list[5][1]-face_reference[0],landmark_list[5][2]-face_reference[1], landmark_list[5][3]-face_reference[2]]
       face_dir_vector_ = [face_dir_vector[0]/face_dir_vector[2], face_dir_vector[1]/face_dir_vector[2], 1]
       cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(landmark_list[5][1]-100*face_dir_vector_[0]), int(landmark_list[5][2]-100*face_dir_vector_[1])), (255,0,255), 2, cv2.LINE_4, 0)
+
+      horizontal_angle = - np.degrees(np.arctan(face_dir_vector[0]/face_dir_vector[2]))
+      vertical_angle = np.degrees(np.arctan(face_dir_vector[1]/face_dir_vector[2]))
 
       left_eye_indexes = [253, 254, 257, 258, 446, 463]
       right_eye_indexes = [23, 24, 27, 28, 226, 243]
@@ -138,6 +141,8 @@ with mp_face_mesh.FaceMesh(
 
       cv2.putText(image, "Blink count: {}".format(blink_count), (int(0.05*w), int(0.1*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
       cv2.putText(image, "Yawn count: {}".format(yawn_count), (int(0.05*w), int(0.15*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      cv2.putText(image, "Horizontal angle : {}".format(horizontal_angle), (int(0.05*w), int(0.2*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      cv2.putText(image, "Verticalal angle : {}".format(vertical_angle), (int(0.05*w), int(0.25*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
     cv2.imshow('MediaPipe Face Mesh', image)
     if cv2.waitKey(5) & 0xFF == 27:
