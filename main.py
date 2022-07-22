@@ -12,6 +12,7 @@ cap = cv2.VideoCapture(0)
 
 blink_count = 0
 is_closed = False
+close_start_time = 0
 yawn_count = 0
 is_yawning = False
 yawn_start_time = 0
@@ -102,11 +103,18 @@ with mp_face_mesh.FaceMesh(
       blink_param3 = (landmark_list[158][2] - landmark_list[145][2])/(landmark_list[28][2] - landmark_list[23][2])
       blink_param4 = (landmark_list[159][2] - landmark_list[144][2])/(landmark_list[27][2] - landmark_list[24][2])
     
-      if ((blink_param1 < 0.1) & (blink_param2 < 0.1) & (blink_param3 < 0.1) & (blink_param4 < 0.1)) & (is_closed==False):
+      if (blink_param1 + blink_param2 + blink_param3 + blink_param4 < 0.4) & (is_closed==False):
+        close_start_time = time()
         blink_count += 1
         is_closed = True
-      elif ((blink_param1 >= 0.1) | (blink_param2 >= 0.1) | (blink_param3 >= 0.1) | (blink_param4 >= 0.1)):
+      elif (blink_param1 + blink_param2 + blink_param3 + blink_param4 >= 0.4):
         is_closed = False
+        close_start_time = 0
+      if (time() - close_start_time > 1) & (is_closed == True):
+        cv2.putText(image, "WAKE UP", (int(0.4*w), int(0.8*h)), cv2.FONT_HERSHEY_PLAIN, 7, (0,0,255), 7)
+          
+      print(is_closed)
+      print(time()-close_start_time)
       
       cv2.circle(image, (int(landmark_list[13][1]),int(landmark_list[13][2])), 2, (255,0,255), cv2.FILLED)
       cv2.circle(image, (int(landmark_list[14][1]),int(landmark_list[14][2])), 2, (255,0,255), cv2.FILLED)
@@ -119,10 +127,10 @@ with mp_face_mesh.FaceMesh(
       if (yawn_param1/yawn_param2 > 0.8) & (is_yawning==False):
         yawn_start_time = time()
         is_yawning = True
-      elif (yawn_param1/yawn_param2 <= 0.8):
+      elif (yawn_param1/yawn_param2 <= 0.7):
         yawn_start_time = 0
         is_yawning = False
-      if (time()-yawn_start_time > 2) & (is_yawning==True):
+      if (time()-yawn_start_time > 1.5) & (is_yawning==True):
         yawn_count += 1
         is_yawning = False
 
