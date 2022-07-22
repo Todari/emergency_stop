@@ -1,0 +1,113 @@
+import cv2
+import mediapipe as mp
+import numpy as np
+
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+
+drawing_spec = mp_drawing.DrawingSpec(thickness=0.5, circle_radius=0.5)
+cap = cv2.VideoCapture(0)
+
+blink_count = 0
+is_closed = False
+
+with mp_face_mesh.FaceMesh(
+  max_num_faces=2,
+  refine_landmarks=True,
+  min_detection_confidence=0.5,
+  min_tracking_confidence=0.5) as face_mesh:
+  
+  while cap.isOpened():
+    success, image = cap.read()
+    if not success:
+      print("Ignoring empty camera frame.")
+      continue
+    
+    image = cv2.flip(image, 1)
+
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = face_mesh.process(image)
+
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    if results.multi_face_landmarks:
+      for face_landmarks in results.multi_face_landmarks:
+        mp_drawing.draw_landmarks(
+            image=image,
+            landmark_list=face_landmarks,
+            connections=mp_face_mesh.FACEMESH_TESSELATION,
+            landmark_drawing_spec=None,
+            connection_drawing_spec=mp_drawing_styles
+            .get_default_face_mesh_tesselation_style())
+        mp_drawing.draw_landmarks(
+            image=image,
+            landmark_list=face_landmarks,
+            connections=mp_face_mesh.FACEMESH_CONTOURS,
+            landmark_drawing_spec=None,
+            connection_drawing_spec=mp_drawing_styles
+            .get_default_face_mesh_contours_style())
+        mp_drawing.draw_landmarks(
+            image=image,
+            landmark_list=face_landmarks,
+            connections=mp_face_mesh.FACEMESH_IRISES,
+            landmark_drawing_spec=None,
+            connection_drawing_spec=mp_drawing_styles
+            .get_default_face_mesh_iris_connections_style())
+
+      face = results.multi_face_landmarks[0]
+      h, w, c = image.shape
+      landmark_list = []
+      for id, xyz_coord in enumerate(face.landmark):
+        landmark_list.append([id, float(xyz_coord.x*w), float(xyz_coord.y*h), float(xyz_coord.z*h)])
+      
+      x1, y1, z1 = landmark_list[129][1], landmark_list[129][2], landmark_list[129][3]
+      x2, y2, z2 = landmark_list[168][1], landmark_list[168][2], landmark_list[168][3] 
+      x3, y3, z3 = landmark_list[358][1], landmark_list[358][2], landmark_list[358][3]
+      nx = (y2-y1)*(z3-z1)-(z2-z1)*(y3-y1)
+      ny = (x2-x1)*(z3-z1)-(z2-z1)*(x3-x1)
+      nz = (y2-y1)*(x3-x1)-(x2-x1)*(y3-y1)
+      print(landmark_list[4])
+      face_dir_vector = [nx/nz, ny/nz, 1]
+
+      #face director vector line
+      cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(-nx*0.1+landmark_list[5][1]), int(ny*0.1+landmark_list[5][2])), (255,0,255), 2, cv2.LINE_4, 0)
+
+      left_eye_indexes = [254, 254, 257, 258, 446, 463]
+      right_eye_indexes = [23, 24, 27, 28, 226, 243]
+      left_eye_x, left_eye_y, right_eye_x, right_eye_y = [], [], [], []
+      for left_eye_coordinates in left_eye_indexes:
+        left_eye_x.append(landmark_list[left_eye_coordinates][1])
+        left_eye_y.append(landmark_list[left_eye_coordinates][2])
+      for right_eye_coordinates in right_eye_indexes:
+        right_eye_x.append(landmark_list[right_eye_coordinates][1])
+        right_eye_y.append(landmark_list[right_eye_coordinates][2])
+      left_eye_center = [np.mean(left_eye_x), np.mean(left_eye_y)]
+      right_eye_center = [np.mean(right_eye_x), np.mean(right_eye_y)]
+      left_eye_distance = [landmark_list[473][1]-left_eye_center[0],landmark_list[473][2]-left_eye_center[1]]
+      right_eye_distance = [landmark_list[468][1]-right_eye_center[0],landmark_list[468][2]-right_eye_center[1]]
+
+      cv2.line(image, (int(landmark_list[473][1]), int(landmark_list[473][2])), (int(left_eye_distance[0]*10+landmark_list[473][1]), int(left_eye_distance[1]*10+landmark_list[473][2])), (255,0,255), 2, cv2.LINE_4, 0)
+      cv2.line(image, (int(landmark_list[468][1]), int(landmark_list[468][2])), (int(right_eye_distance[0]*10+landmark_list[468][1]), int(right_eye_distance[1]*10+landmark_list[468][2])), (255,0,255), 2, cv2.LINE_4, 0)
+      blink_param1 = (landmark_list[386][2] - landmark_list[373][2])/(landmark_list[257][2] - landmark_list[254][2])
+      blink_param2 = (landmark_list[385][2] - landmark_list[374][2])/(landmark_list[258][2] - landmark_list[253][2])
+      blink_param3 = (landmark_list[158][2] - landmark_list[145][2])/(landmark_list[28][2] - landmark_list[23][2])
+      blink_param4 = (landmark_list[159][2] - landmark_list[144][2])/(landmark_list[27][2] - landmark_list[24][2])
+    
+      if ((blink_param1 < 0.1) & (blink_param2 < 0.1) & (blink_param3 < 0.1) & (blink_param4 < 0.1)) & (is_closed==False):
+        blink_count += 1
+        is_closed = True
+      elif ((blink_param1 >= 0.1) | (blink_param2 >= 0.1) | (blink_param3 >= 0.1) | (blink_param4 >= 0.1)):
+        is_closed = False
+      print(is_closed)
+      cv2.putText(image, "Blink count: {}".format(blink_count), (int(0.05*w), int(0.1*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      
+
+
+
+    cv2.imshow('MediaPipe Face Mesh', image)
+    if cv2.waitKey(5) & 0xFF == 27:
+      break
+cap.release()
