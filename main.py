@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+from time import time
 
 mp_face_mesh = mp.solutions.face_mesh
 mp_drawing = mp.solutions.drawing_utils
@@ -11,6 +12,9 @@ cap = cv2.VideoCapture(0)
 
 blink_count = 0
 is_closed = False
+yawn_count = 0
+is_yawning = False
+yawn_start_time = 0
 
 with mp_face_mesh.FaceMesh(
   max_num_faces=2,
@@ -62,6 +66,8 @@ with mp_face_mesh.FaceMesh(
       landmark_list = []
       for id, xyz_coord in enumerate(face.landmark):
         landmark_list.append([id, float(xyz_coord.x*w), float(xyz_coord.y*h), float(xyz_coord.z*h)])
+        #landmark number
+        #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
       
       x1, y1, z1 = landmark_list[129][1], landmark_list[129][2], landmark_list[129][3]
       x2, y2, z2 = landmark_list[168][1], landmark_list[168][2], landmark_list[168][3] 
@@ -101,11 +107,27 @@ with mp_face_mesh.FaceMesh(
         is_closed = True
       elif ((blink_param1 >= 0.1) | (blink_param2 >= 0.1) | (blink_param3 >= 0.1) | (blink_param4 >= 0.1)):
         is_closed = False
-      print(is_closed)
-      cv2.putText(image, "Blink count: {}".format(blink_count), (int(0.05*w), int(0.1*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
       
+      cv2.circle(image, (int(landmark_list[13][1]),int(landmark_list[13][2])), 2, (255,0,255), cv2.FILLED)
+      cv2.circle(image, (int(landmark_list[14][1]),int(landmark_list[14][2])), 2, (255,0,255), cv2.FILLED)
+      cv2.circle(image, (int(landmark_list[78][1]),int(landmark_list[78][2])), 2, (255,0,255), cv2.FILLED)
+      cv2.circle(image, (int(landmark_list[308][1]),int(landmark_list[308][2])), 2, (255,0,255), cv2.FILLED)
 
+      yawn_param1 = ((landmark_list[13][1]-landmark_list[14][1])**2 + (landmark_list[13][2]-landmark_list[14][2])**2)**0.5
+      yawn_param2 = ((landmark_list[308][1]-landmark_list[78][1])**2 + (landmark_list[308][2]-landmark_list[78][2])**2)**0.5
 
+      if (yawn_param1/yawn_param2 > 0.8) & (is_yawning==False):
+        yawn_start_time = time()
+        is_yawning = True
+      elif (yawn_param1/yawn_param2 <= 0.8):
+        yawn_start_time = 0
+        is_yawning = False
+      if (time()-yawn_start_time > 2) & (is_yawning==True):
+        yawn_count += 1
+        is_yawning = False
+
+      cv2.putText(image, "Blink count: {}".format(blink_count), (int(0.05*w), int(0.1*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      cv2.putText(image, "Yawn count: {}".format(yawn_count), (int(0.05*w), int(0.15*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
     cv2.imshow('MediaPipe Face Mesh', image)
     if cv2.waitKey(5) & 0xFF == 27:
