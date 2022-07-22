@@ -90,6 +90,19 @@ with mp_face_mesh.FaceMesh(
       horizontal_angle = - np.degrees(np.arctan(face_dir_vector[0]/face_dir_vector[2]))
       vertical_angle = np.degrees(np.arctan(face_dir_vector[1]/face_dir_vector[2]))
 
+      eye_reference = [(landmark_list[127][1]+landmark_list[356][1])/2, (landmark_list[127][2]+landmark_list[356][2])/2, (landmark_list[127][3] + landmark_list[356][3])/2]
+      eye_reference_vector = [landmark_list[168][1]-eye_reference[0],landmark_list[168][2]-eye_reference[1], landmark_list[168][3]-eye_reference[2]]
+      eye_reference_vector_ = [eye_reference_vector[0]/eye_reference_vector[2], eye_reference_vector[1]/eye_reference_vector[2], 1]
+      cv2.line(image, (int(landmark_list[168][1]), int(landmark_list[168][2])), (int(landmark_list[168][1]-100*eye_reference_vector_[0]), int(landmark_list[168][2]-100*eye_reference_vector_[1])), (0,0,255), 2, cv2.LINE_4, 0)
+      left_eye_reference = [(landmark_list[127][1]*2+landmark_list[356][1])/3, (landmark_list[127][2]*2+landmark_list[356][2])/3, (landmark_list[127][3]*2 + landmark_list[356][3])/3]
+      right_eye_reference = [(landmark_list[127][1]+landmark_list[356][1]*2)/3, (landmark_list[127][2]+landmark_list[356][2]*2)/3, (landmark_list[127][3] + landmark_list[356][3]*2)/3]
+      left_eye_vector = [landmark_list[468][1]-left_eye_reference[0],landmark_list[468][2]-left_eye_reference[1], landmark_list[468][3]-left_eye_reference[2]]
+      right_eye_vector = [landmark_list[473][1]-right_eye_reference[0],landmark_list[473][2]-right_eye_reference[1], landmark_list[473][3]-right_eye_reference[2]]
+      left_eye_vector_ = [left_eye_vector[0]/left_eye_vector[2], left_eye_vector[1]/left_eye_vector[2], 1]
+      right_eye_vector_ = [right_eye_vector[0]/right_eye_vector[2], right_eye_vector[1]/right_eye_vector[2], 1]
+      cv2.line(image, (int(landmark_list[468][1]), int(landmark_list[468][2])), (int(landmark_list[468][1]-100*left_eye_vector_[0]), int(landmark_list[468][2]-100*left_eye_vector_[1])), (0,0,255), 2, cv2.LINE_4, 0)
+      cv2.line(image, (int(landmark_list[473][1]), int(landmark_list[473][2])), (int(landmark_list[473][1]-100*right_eye_vector_[0]), int(landmark_list[473][2]-100*right_eye_vector_[1])), (0,0,255), 2, cv2.LINE_4, 0)
+
       left_eye_indexes = [253, 254, 257, 258, 446, 463]
       right_eye_indexes = [23, 24, 27, 28, 226, 243]
       left_eye_x, left_eye_y, right_eye_x, right_eye_y = [], [], [], []
