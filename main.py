@@ -70,7 +70,7 @@ with mp_face_mesh.FaceMesh(
         #landmark number
         #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
       
-      x1, y1, z1 = landmark_list[129][1], landmark_list[129][2], landmark_list[129][3]
+      """x1, y1, z1 = landmark_list[129][1], landmark_list[129][2], landmark_list[129][3]
       x2, y2, z2 = landmark_list[168][1], landmark_list[168][2], landmark_list[168][3] 
       x3, y3, z3 = landmark_list[358][1], landmark_list[358][2], landmark_list[358][3]
       nx = (y2-y1)*(z3-z1)-(z2-z1)*(y3-y1)
@@ -80,9 +80,14 @@ with mp_face_mesh.FaceMesh(
       face_dir_vector = [nx/nz, ny/nz, 1]
 
       #face director vector line
-      cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(-nx*0.1+landmark_list[5][1]), int(ny*0.1+landmark_list[5][2])), (255,0,255), 2, cv2.LINE_4, 0)
+      cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(-nx*0.1+landmark_list[5][1]), int(ny*0.1+landmark_list[5][2])), (255,0,255), 2, cv2.LINE_4, 0)"""
+      
+      face_reference = [(landmark_list[234][1]+landmark_list[454][1])/2, (landmark_list[234][2]+landmark_list[454][2])/2, (landmark_list[234][3] + landmark_list[454][3])/2]
+      face_dir_vector = [landmark_list[5][1]-face_reference[0],landmark_list[5][2]-face_reference[1], landmark_list[5][3]-face_reference[2]]
+      face_dir_vector_ = [face_dir_vector[0]/face_dir_vector[2], face_dir_vector[1]/face_dir_vector[2], 1]
+      cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(landmark_list[5][1]-100*face_dir_vector_[0]), int(landmark_list[5][2]-100*face_dir_vector_[1])), (255,0,255), 2, cv2.LINE_4, 0)
 
-      left_eye_indexes = [254, 254, 257, 258, 446, 463]
+      left_eye_indexes = [253, 254, 257, 258, 446, 463]
       right_eye_indexes = [23, 24, 27, 28, 226, 243]
       left_eye_x, left_eye_y, right_eye_x, right_eye_y = [], [], [], []
       for left_eye_coordinates in left_eye_indexes:
@@ -93,7 +98,7 @@ with mp_face_mesh.FaceMesh(
         right_eye_y.append(landmark_list[right_eye_coordinates][2])
       left_eye_center = [np.mean(left_eye_x), np.mean(left_eye_y)]
       right_eye_center = [np.mean(right_eye_x), np.mean(right_eye_y)]
-      left_eye_distance = [landmark_list[473][1]-left_eye_center[0],landmark_list[473][2]-left_eye_center[1]]
+      left_eye_distance = [landmark_list[473][1]-left_eye_center[0],landmark_list[473][2]- left_eye_center[1]]
       right_eye_distance = [landmark_list[468][1]-right_eye_center[0],landmark_list[468][2]-right_eye_center[1]]
 
       cv2.line(image, (int(landmark_list[473][1]), int(landmark_list[473][2])), (int(left_eye_distance[0]*10+landmark_list[473][1]), int(left_eye_distance[1]*10+landmark_list[473][2])), (255,0,255), 2, cv2.LINE_4, 0)
@@ -112,9 +117,6 @@ with mp_face_mesh.FaceMesh(
         close_start_time = 0
       if (time() - close_start_time > 1) & (is_closed == True):
         cv2.putText(image, "WAKE UP", (int(0.4*w), int(0.8*h)), cv2.FONT_HERSHEY_PLAIN, 7, (0,0,255), 7)
-          
-      print(is_closed)
-      print(time()-close_start_time)
       
       cv2.circle(image, (int(landmark_list[13][1]),int(landmark_list[13][2])), 2, (255,0,255), cv2.FILLED)
       cv2.circle(image, (int(landmark_list[14][1]),int(landmark_list[14][2])), 2, (255,0,255), cv2.FILLED)
