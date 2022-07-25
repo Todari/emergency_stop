@@ -154,8 +154,8 @@ with mp_face_mesh.FaceMesh(
 
       cv2.putText(image, "Blink count: {}".format(blink_count), (int(0.05*w), int(0.1*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
       cv2.putText(image, "Yawn count: {}".format(yawn_count), (int(0.05*w), int(0.15*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
-      cv2.putText(image, "Horizontal angle : {}".format(horizontal_angle), (int(0.05*w), int(0.2*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
-      cv2.putText(image, "Verticalal angle : {}".format(vertical_angle), (int(0.05*w), int(0.25*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      cv2.putText(image, "Horizontal angle : %.2f"%horizontal_angle, (int(0.05*w), int(0.2*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
+      cv2.putText(image, "Verticalal angle : %.2f"%vertical_angle, (int(0.05*w), int(0.25*h)), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
     cv2.imshow('MediaPipe Face Mesh', image)
     if cv2.waitKey(5) & 0xFF == 27:
