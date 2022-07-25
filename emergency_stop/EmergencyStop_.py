@@ -69,18 +69,6 @@ with mp_face_mesh.FaceMesh(
         landmark_list.append([id, float(xyz_coord.x*w), float(xyz_coord.y*h), float(xyz_coord.z*h)])
         #landmark number
         #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
-      
-      """x1, y1, z1 = landmark_list[129][1], landmark_list[129][2], landmark_list[129][3]
-      x2, y2, z2 = landmark_list[168][1], landmark_list[168][2], landmark_list[168][3] 
-      x3, y3, z3 = landmark_list[358][1], landmark_list[358][2], landmark_list[358][3]
-      nx = (y2-y1)*(z3-z1)-(z2-z1)*(y3-y1)
-      ny = (x2-x1)*(z3-z1)-(z2-z1)*(x3-x1)
-      nz = (y2-y1)*(x3-x1)-(x2-x1)*(y3-y1)
-      print(landmark_list[4])
-      face_dir_vector = [nx/nz, ny/nz, 1]
-
-      #face director vector line
-      cv2.line(image, (int(landmark_list[5][1]), int(landmark_list[5][2])), (int(-nx*0.1+landmark_list[5][1]), int(ny*0.1+landmark_list[5][2])), (255,0,255), 2, cv2.LINE_4, 0)"""
 
       face_reference = [(landmark_list[234][1]+landmark_list[454][1])/2, (landmark_list[234][2]+landmark_list[454][2])/2, (landmark_list[234][3] + landmark_list[454][3])/2]
       face_dir_vector = [landmark_list[5][1]-face_reference[0],landmark_list[5][2]-face_reference[1], landmark_list[5][3]-face_reference[2]]
