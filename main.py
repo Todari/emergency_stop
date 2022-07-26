@@ -2,7 +2,7 @@ import cv2
 from emergency_stop import EmergencyStop
 
 ES = EmergencyStop()
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 while cap.isOpened():
     success, image = cap.read()
@@ -17,9 +17,11 @@ while cap.isOpened():
         ES.drawing_face_mesh(results)
         ES.get_landmarks(results)
 
-        ES.init_face()
+        ES.init_face_eye()
         ES.drawing_face_direction()
         ES.print_yawn_counter()
+        ES.print_blink_counter()
+        ES.drawing_eye_direction()
     
     cv2.imshow("Emergency stop", ES.image)
 

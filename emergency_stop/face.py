@@ -11,6 +11,8 @@ class Face():
     yawn_count_array = []
     yawn_time_array = []
 
+    yawn_time_threshold = 1.5
+
     def __init__(self, landmark_list):
 
         self.landmark_list = landmark_list
@@ -26,9 +28,8 @@ class Face():
 
     def face_direction(self):
 
-        ref0 = self.landmark_list[self.FACE_REFERENCE[0]]
-        ref1 = self.landmark_list[self.FACE_REFERENCE[1]]
-        ref2 = self.landmark_list[self.FACE_REFERENCE[2]]
+        for i in range(len(self.FACE_REFERENCE)):
+            globals()['ref{}'.format(i)] = self.landmark_list[self.FACE_REFERENCE[i]]
 
         face_reference = [(ref0[1]+ref1[1])/2, (ref0[2]+ref1[2])/2, (ref0[3] + ref1[3])/2]
         face_dir_vector = [ref2[1]-face_reference[0],ref2[2]-face_reference[1], ref2[3]-face_reference[2]]
@@ -39,9 +40,8 @@ class Face():
 
     def face_direction2(self):
 
-        ref0 = self.landmark_list[self.FACE_REFERENCE_2[0]]
-        ref1 = self.landmark_list[self.FACE_REFERENCE_2[1]]
-        ref2 = self.landmark_list[self.FACE_REFERENCE_2[2]]
+        for i in range(len(self.FACE_REFERENCE_2)):
+            globals()['ref{}'.format(i)] = self.landmark_list[self.FACE_REFERENCE_2[i]]
 
         face_reference = [(ref0[1]+ref1[1])/2, (ref0[2]+ref1[2])/2, (ref0[3] + ref1[3])/2]
         face_dir_vector = [ref2[1]-face_reference[0],ref2[2]-face_reference[1], ref2[3]-face_reference[2]]
@@ -54,10 +54,8 @@ class Face():
 
     def yawn_counter(self):
 
-        ref0 = self.landmark_list[self.MOUTH_REFERENCE[0]]
-        ref1 = self.landmark_list[self.MOUTH_REFERENCE[1]]
-        ref2 = self.landmark_list[self.MOUTH_REFERENCE[2]]
-        ref3 = self.landmark_list[self.MOUTH_REFERENCE[3]]
+        for i in range(len(self.MOUTH_REFERENCE)):
+            globals()['ref{}'.format(i)] = self.landmark_list[self.MOUTH_REFERENCE[i]]
 
         yawn_param1 = ((ref0[1]-ref1[1])**2 + (ref0[2]-ref1[2])**2)**0.5
         yawn_param2 = ((ref2[1]-ref3[1])**2 + (ref2[2]-ref3[2])**2)**0.5
@@ -66,7 +64,6 @@ class Face():
             self.yawn_time_array.append(time())
         elif (yawn_param1/yawn_param2 <= 0.7):
             if (len(self.yawn_time_array)!=0):
-                if (time()-self.yawn_time_array[0] > 1.5):
+                if (time()-self.yawn_time_array[0] > self.yawn_time_threshold):
                     self.yawn_count_array.append(0)
             self.yawn_time_array.clear()
-        
