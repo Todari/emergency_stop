@@ -30,31 +30,33 @@ class EmergencyStop():
     self.face = None
 
   def init(self, image):
+
     self.image = image
     self.image = cv2.flip(self.image, 1)
     self.image.flags.writeable = False
     self.image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
-
-    self.results = self.face_mesh.process(self.image)
     
     self.image.flags.writeable = True
     self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
 
-    landmarks = self.results.multi_face_landmarks[0]
+  def get_landmarks(self, results):
+
+    landmarks = results.multi_face_landmarks[0]
     self.landmark_list=[]
 
-    #size[0] = h, size[1] = w, size[2] = c
+    """size[0] = h, size[1] = w, size[2] = c"""
     self.size[0], self.size[1], self.size[2] = self.image.shape
 
     for id, xyz_coord in enumerate(landmarks.landmark):
       self.landmark_list.append([id, float(xyz_coord.x*self.size[1]), float(xyz_coord.y*self.size[0]), float(xyz_coord.z*self.size[0])])
-      #show landmark number
+      
+      """show landmark number"""
       #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
 
     self.face = Face(self.landmark_list)
 
-  def drawing_face_mesh(self):
-    for face_landmarks in self.results.multi_face_landmarks:
+  def drawing_face_mesh(self, results):
+    for face_landmarks in results.multi_face_landmarks:
       self.mp_drawing.draw_landmarks(
           image=self.image,
           landmark_list=face_landmarks,
@@ -76,6 +78,7 @@ class EmergencyStop():
           landmark_drawing_spec=None,
           connection_drawing_spec=self.mp_drawing_styles
           .get_default_face_mesh_iris_connections_style())
+    
 
   def drawing_face_direction(self):
 

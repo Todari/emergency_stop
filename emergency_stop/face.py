@@ -6,9 +6,11 @@ class Face():
 
     FACE_REFERENCE = [234, 454, 5]
     MOUTH_REFERENCE = [13, 14, 308, 78]
+
     yawn_start_time = 0
     yawn_count = 0
     is_yawning = False
+    print("@@@@@")
 
     def __init__(self, landmark_list):
 
@@ -47,14 +49,17 @@ class Face():
         yawn_param1 = ((ref0[1]-ref1[1])**2 + (ref0[2]-ref1[2])**2)**0.5
         yawn_param2 = ((ref2[1]-ref3[1])**2 + (ref2[2]-ref3[2])**2)**0.5
 
-        if (yawn_param1/yawn_param2 > 0.8) & (self.is_yawning==False):
+        if (yawn_param1/yawn_param2 > 0.8) & (self.is_yawning == False):
             self.yawn_start_time = time()
             self.is_yawning = True
+            print("!!!!!!!!!!!!!!!!")
         elif (yawn_param1/yawn_param2 <= 0.7):
             self.yawn_start_time = 0
             self.is_yawning = False
+            print("?????????????????????")
         if (time()-self.yawn_start_time > 1.5) & (self.is_yawning==True):
             self.yawn_count += 1
+            self.is_yawning
 
         print(self.yawn_start_time)
         print(self.yawn_count)

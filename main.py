@@ -11,9 +11,11 @@ while cap.isOpened():
         continue
 
     ES.init(image)
+    results = ES.face_mesh.process(ES.image)
 
-    if ES.results.multi_face_landmarks:
-        ES.drawing_face_mesh()
+    if results.multi_face_landmarks:
+        ES.drawing_face_mesh(results)
+        ES.get_landmarks(results)
         ES.drawing_face_direction()
         ES.print_yawn_counter()
     
