@@ -53,8 +53,6 @@ class EmergencyStop():
       """show landmark number"""
       #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
 
-    self.face = Face(self.landmark_list)
-
   def drawing_face_mesh(self, results):
     for face_landmarks in results.multi_face_landmarks:
       self.mp_drawing.draw_landmarks(
@@ -78,8 +76,11 @@ class EmergencyStop():
           landmark_drawing_spec=None,
           connection_drawing_spec=self.mp_drawing_styles
           .get_default_face_mesh_iris_connections_style())
-    
 
+  def init_face(self):
+    
+    self.face = Face(self.landmark_list)
+    
   def drawing_face_direction(self):
 
     self.face.face_direction()

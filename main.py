@@ -16,6 +16,8 @@ while cap.isOpened():
     if results.multi_face_landmarks:
         ES.drawing_face_mesh(results)
         ES.get_landmarks(results)
+
+        ES.init_face()
         ES.drawing_face_direction()
         ES.print_yawn_counter()
     
