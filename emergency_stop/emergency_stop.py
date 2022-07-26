@@ -77,15 +77,17 @@ class EmergencyStop():
           connection_drawing_spec=self.mp_drawing_styles
           .get_default_face_mesh_iris_connections_style())
 
-  def init_face(self):
+  def init_face_eye(self):
     
     self.face = Face(self.landmark_list)
     
   def drawing_face_direction(self):
 
     self.face.face_direction()
+    self.face.face_direction2()
 
     cv2.line(self.image, (self.face.point1[0],self.face.point1[1]), (self.face.point2[0], self.face.point2[1]), (255,0,255), 2, cv2.LINE_4, 0)
+    cv2.line(self.image, (self.face.point3[0],self.face.point3[1]), (self.face.point4[0], self.face.point4[1]), (255,0,255), 2, cv2.LINE_4, 0)
     cv2.putText(self.image, "Horizontal angle : %.2f"%self.face.horizontal_angle, (int(0.05*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
     cv2.putText(self.image, "Verticalal angle : %.2f"%self.face.vertical_angle, (int(0.05*self.size[1]), int(0.25*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 

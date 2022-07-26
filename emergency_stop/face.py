@@ -5,6 +5,7 @@ from time import time
 class Face():
 
     FACE_REFERENCE = [234, 454, 5]
+    FACE_REFERENCE_2 = [127, 356, 168]
     MOUTH_REFERENCE = [13, 14, 308, 78]
 
     yawn_count_array = []
@@ -13,14 +14,13 @@ class Face():
     def __init__(self, landmark_list):
 
         self.landmark_list = landmark_list
-
-        self.face_reference = []
-        self.face_fir_vector = []
         self.horizontal_angle = 0.0
         self.vertical_angle = 0.0
 
         self.point1 = 0
         self.point2 = 0
+        self.point3 = 0
+        self.point4 = 0
 
         self.yawn_count = len(self.yawn_count_array)
 
@@ -30,14 +30,27 @@ class Face():
         ref1 = self.landmark_list[self.FACE_REFERENCE[1]]
         ref2 = self.landmark_list[self.FACE_REFERENCE[2]]
 
-        self.face_reference = [(ref0[1]+ref1[1])/2, (ref0[2]+ref1[2])/2, (ref0[3] + ref1[3])/2]
-        face_dir_vector = [ref2[1]-self.face_reference[0],ref2[2]-self.face_reference[1], ref2[3]-self.face_reference[2]]
-        self.face_dir_vector = [face_dir_vector[0]/face_dir_vector[2], face_dir_vector[1]/face_dir_vector[2], 1]
-        self.horizontal_angle = - np.degrees(np.arctan(self.face_dir_vector[0]/self.face_dir_vector[2]))
-        self.vertical_angle = np.degrees(np.arctan(self.face_dir_vector[1]/self.face_dir_vector[2]))
+        face_reference = [(ref0[1]+ref1[1])/2, (ref0[2]+ref1[2])/2, (ref0[3] + ref1[3])/2]
+        face_dir_vector = [ref2[1]-face_reference[0],ref2[2]-face_reference[1], ref2[3]-face_reference[2]]
+        face_dir_vector = [face_dir_vector[0]/face_dir_vector[2], face_dir_vector[1]/face_dir_vector[2], 1]
 
         self.point1 = [int(ref2[1]), int(ref2[2])]
-        self.point2 = [int(ref2[1]-100*self.face_dir_vector[0]), int(ref2[2]-100*self.face_dir_vector[1])]
+        self.point2 = [int(ref2[1]-100*face_dir_vector[0]), int(ref2[2]-100*face_dir_vector[1])]
+
+    def face_direction2(self):
+
+        ref0 = self.landmark_list[self.FACE_REFERENCE_2[0]]
+        ref1 = self.landmark_list[self.FACE_REFERENCE_2[1]]
+        ref2 = self.landmark_list[self.FACE_REFERENCE_2[2]]
+
+        face_reference = [(ref0[1]+ref1[1])/2, (ref0[2]+ref1[2])/2, (ref0[3] + ref1[3])/2]
+        face_dir_vector = [ref2[1]-face_reference[0],ref2[2]-face_reference[1], ref2[3]-face_reference[2]]
+        face_dir_vector = [face_dir_vector[0]/face_dir_vector[2], face_dir_vector[1]/face_dir_vector[2], 1]
+        self.horizontal_angle = - np.degrees(np.arctan(face_dir_vector[0]/face_dir_vector[2]))
+        self.vertical_angle = np.degrees(np.arctan(face_dir_vector[1]/face_dir_vector[2]))
+
+        self.point3 = [int(ref2[1]), int(ref2[2])]
+        self.point4 = [int(ref2[1]-100*face_dir_vector[0]), int(ref2[2]-100*face_dir_vector[1])]
 
     def yawn_counter(self):
 
