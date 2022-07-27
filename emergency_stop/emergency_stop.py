@@ -109,6 +109,7 @@ class EmergencyStop():
   def drawing_eye_direction(self):
 
     self.eye.eye_direction()
-    
-    cv2.line(self.image, (self.eye.point1[0],self.eye.point1[1]), (self.eye.point2[0], self.eye.point2[1]), (0,0,255), 2, cv2.LINE_4, 0)
-    cv2.line(self.image, (self.eye.point3[0],self.eye.point3[1]), (self.eye.point4[0], self.eye.point4[1]), (0,0,255), 2, cv2.LINE_4, 0)
+
+    # cv2.line(self.image, (self.eye.point1[0],self.eye.point1[1]), (self.eye.point2[0], self.eye.point2[1]), (0,0,255), 2, cv2.LINE_4, 0)
+    # cv2.line(self.image, (self.eye.point3[0],self.eye.point3[1]), (self.eye.point4[0], self.eye.point4[1]), (0,0,255), 2, cv2.LINE_4, 0)
+    cv2.line(self.image, (self.eye.point5[0],self.eye.point5[1]), (self.eye.point6[0], self.eye.point6[1]), (255,0,0), 2, cv2.LINE_4, 0)

@@ -2,7 +2,7 @@ import cv2
 from emergency_stop import EmergencyStop
 
 ES = EmergencyStop()
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
     success, image = cap.read()
