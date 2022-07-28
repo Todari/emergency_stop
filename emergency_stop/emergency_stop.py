@@ -69,13 +69,13 @@ class EmergencyStop():
           landmark_drawing_spec=None,
           connection_drawing_spec=self.mp_drawing_styles
           .get_default_face_mesh_contours_style())
-      """self.mp_drawing.draw_landmarks(
+      self.mp_drawing.draw_landmarks(
           image=self.image,
           landmark_list=face_landmarks,
           connections=self.mp_face_mesh.FACEMESH_IRISES,
           landmark_drawing_spec=None,
           connection_drawing_spec=self.mp_drawing_styles
-          .get_default_face_mesh_iris_connections_style())"""
+          .get_default_face_mesh_iris_connections_style())
 
   def init_face_eye(self):
     
@@ -99,17 +99,33 @@ class EmergencyStop():
     cv2.putText(self.image, "Yawn count: {}".format(self.face.yawn_count), (int(0.05*self.size[1]), int(0.15*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
   def print_blink_counter(self):
-
-    self.eye.blink_counter()
+    if(self.face.vertical_angle > -20):
+      self.eye.blink_counter() 
     cv2.putText(self.image, "Blink count: {}".format(self.eye.blink_count), (int(0.05*self.size[1]), int(0.1*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
     if self.eye.is_sleeping():
       cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 10, (0,0,255), 5)
 
-  def drawing_eye_direction(self):
+  def _looking_direction(self):
+    if(self.face.vertical_angle < -20):
+      return "Down"
+    if(self.face.horizontal_angle < -45) & (self.eye.right_iris[0] < self.eye.right_center[0]):
+      return "Left"
+    elif(self.face.horizontal_angle > 45) & (self.eye.left_iris[0] > self.eye.left_center[0]):
+      return "Right"
 
-    self.eye.eye_direction()
+  def print_looking_direction(self):
+    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.2*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 10, (255,0,255), 5)
 
-    # cv2.line(self.image, (self.eye.point1[0],self.eye.point1[1]), (self.eye.point2[0], self.eye.point2[1]), (0,0,255), 2, cv2.LINE_4, 0)
-    # cv2.line(self.image, (self.eye.point3[0],self.eye.point3[1]), (self.eye.point4[0], self.eye.point4[1]), (0,0,255), 2, cv2.LINE_4, 0)
-    cv2.line(self.image, (self.eye.point5[0],self.eye.point5[1]), (self.eye.point6[0], self.eye.point6[1]), (255,0,0), 2, cv2.LINE_4, 0)
+
+
+
+
+
+  # def drawing_eye_direction(self):
+
+  #   self.eye.eye_direction()
+
+  #   cv2.line(self.image, (self.eye.point1[0],self.eye.point1[1]), (self.eye.point2[0], self.eye.point2[1]), (0,0,255), 2, cv2.LINE_4, 0)
+  #   cv2.line(self.image, (self.eye.point3[0],self.eye.point3[1]), (self.eye.point4[0], self.eye.point4[1]), (0,0,255), 2, cv2.LINE_4, 0)
+  #   cv2.line(self.image, (self.eye.point5[0],self.eye.point5[1]), (self.eye.point6[0], self.eye.point6[1]), (255,0,0), 2, cv2.LINE_4, 0)

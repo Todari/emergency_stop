@@ -21,7 +21,7 @@ while cap.isOpened():
         ES.drawing_face_direction()
         ES.print_yawn_counter()
         ES.print_blink_counter()
-        ES.drawing_eye_direction()
+        ES.print_looking_direction()
     
     cv2.imshow("Emergency stop", ES.image)
 

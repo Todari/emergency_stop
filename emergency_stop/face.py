@@ -60,9 +60,9 @@ class Face():
         yawn_param1 = ((ref0[1]-ref1[1])**2 + (ref0[2]-ref1[2])**2)**0.5
         yawn_param2 = ((ref2[1]-ref3[1])**2 + (ref2[2]-ref3[2])**2)**0.5
 
-        if (yawn_param1/yawn_param2 > 0.7):
+        if (yawn_param1/yawn_param2 > 0.5):
             self.yawn_time_array.append(time())
-        elif (yawn_param1/yawn_param2 <= 0.7):
+        elif (yawn_param1/yawn_param2 <= 0.5):
             if (len(self.yawn_time_array)!=0):
                 if (time()-self.yawn_time_array[0] > self.yawn_time_threshold):
                     self.yawn_count_array.append(0)
