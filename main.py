@@ -25,10 +25,15 @@ while cap.isOpened():
         ES.print_yawn_counter()
         ES.print_blink_counter()
         ES.print_looking_direction()
-        if(ES.sleeping_alert() & ES.is_sleeping_sound==False):
+        
+        if ES.sleeping_alert() & (ES.playing_sleeping_sound==False):
+            ES.playing_sleeping_sound = True
             p_sleeping_sound.start()
-        if(ES.direction_alert() & ES.is_direction_sound==False):
+            print("sleeping", ES.playing_sleeping_sound)
+        if ES.direction_alert() & (ES.playing_direction_sound==False):
+            ES.playing_direction_sound = True
             p_direction_sound.start()
+            print("direction", ES.playing_direction_sound)
     
     cv2.imshow("Emergency stop", ES.image)
 

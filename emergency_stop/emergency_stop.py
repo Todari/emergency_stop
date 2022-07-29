@@ -34,8 +34,8 @@ class EmergencyStop():
     self.direction_array = []
     self.direction_alert_threshold = 1.5
 
-    self.is_sleeping_sound = False
-    self.is_direction_sound = False
+    self.playing_sleeping_sound = False
+    self.playing_direction_sound = False
 
   def init(self, image):
 
@@ -142,7 +142,7 @@ class EmergencyStop():
     cv2.circle(self.image, (int(self.eye.left_center[0]), int(self.eye.left_center[1])), 3, (0, 255, 0))
 
   def direction_alert(self):
-    if (self._looking_direction != "Forward"):
+    if (self._looking_direction() != "Forward"):
       self.direction_array.append(time())
     else:
       self.direction_array.clear()
@@ -153,11 +153,12 @@ class EmergencyStop():
     return False
 
   async def sleeping_sound(self):
-    self.is_sleeping_sound = True
     await playsound('sleeping_sound.mp3')
-    self.is_sleeping_sound = False
+    self.playing_sleeping_sound = False
+    print("sleeping", ES.playing_sleeping_sound)
+
 
   async def direction_sound(self):
-    self.is_sleeping_sound = True
     await playsound('direction_sound.mp3')
-    self.is_sleeping_sound = False
+    self.playing_direction_sound = False
+    print("direction", ES.playing_direction_sound)
