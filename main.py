@@ -1,8 +1,11 @@
 import cv2
 from emergency_stop import EmergencyStop
+from multiprocessing import Process
 
 ES = EmergencyStop()
 cap = cv2.VideoCapture(0)
+p_sleeping_sound = Process(target=ES.sleeping_sound)
+p_direction_sound = Process(target=ES.direction_sound)
 
 while cap.isOpened():
     success, image = cap.read()
@@ -22,6 +25,10 @@ while cap.isOpened():
         ES.print_yawn_counter()
         ES.print_blink_counter()
         ES.print_looking_direction()
+        if(ES.sleeping_alert() & ES.is_sleeping_sound==False):
+            p_sleeping_sound.start()
+        if(ES.direction_alert() & ES.is_direction_sound==False):
+            p_direction_sound.start()
     
     cv2.imshow("Emergency stop", ES.image)
 

@@ -6,9 +6,9 @@ from sympy import Symbol, solve
 class Eye():
 
     LEFT_EYE_IN_REFERENCE = [145, 144, 159, 158]
-    LEFT_EYE_OUT_REFERENCE = [23, 24, 27, 28, 243, 226]
+    LEFT_EYE_OUT_REFERENCE = [23, 24, 27, 28, 33, 133]
     RIGHT_EYE_IN_REFERENCE = [373, 374, 385, 386]
-    RIGHT_EYE_OUT_REFERENCE = [254, 253, 258, 257, 463, 446]
+    RIGHT_EYE_OUT_REFERENCE = [254, 253, 258, 257, 263, 362]
     EYE_CENTER_REFERENCE = [226, 446]
     IRIS_REFERENCE = [468, 473]
 
@@ -16,7 +16,7 @@ class Eye():
     close_time_array = []
 
     """print alert threshold"""
-    close_time_threshold = 2
+    close_time_threshold = 1
 
     def __init__ (self, landmark_list):
 
@@ -30,6 +30,10 @@ class Eye():
         , (self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[4]][3]+self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[5]][3])/2]
         self.left_iris = [self.landmark_list[self.IRIS_REFERENCE[0]][1],self.landmark_list[self.IRIS_REFERENCE[0]][2],self.landmark_list[self.IRIS_REFERENCE[0]][3]]
         self.right_iris = [self.landmark_list[self.IRIS_REFERENCE[1]][1],self.landmark_list[self.IRIS_REFERENCE[1]][2],self.landmark_list[self.IRIS_REFERENCE[1]][3]]
+        self.left_length = ((self.landmark_list[self.LEFT_EYE_OUT_REFERENCE[4]][1]-self.landmark_list[self.LEFT_EYE_OUT_REFERENCE[5]][1])**2
+        +(self.landmark_list[self.LEFT_EYE_OUT_REFERENCE[4]][2]-self.landmark_list[self.LEFT_EYE_OUT_REFERENCE[5]][2])**2)**0.5
+        self.right_length = ((self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[4]][1]-self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[5]][1])**2
+        +(self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[4]][2]-self.landmark_list[self.RIGHT_EYE_OUT_REFERENCE[5]][2])**2)**0.5
 
 
     def blink_counter(self):

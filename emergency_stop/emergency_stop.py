@@ -2,6 +2,10 @@ import cv2
 import mediapipe as mp
 from .face import Face
 from .eye import Eye
+from time import time
+from gtts import gTTS
+from playsound import playsound
+import asyncio
 
 class EmergencyStop():
 
@@ -27,7 +31,11 @@ class EmergencyStop():
     self.face = None
     self.eye = None
 
-    self.is_sleeping = False
+    self.direction_array = []
+    self.direction_alert_threshold = 1.5
+
+    self.is_sleeping_sound = False
+    self.is_direction_sound = False
 
   def init(self, image):
 
@@ -44,24 +52,25 @@ class EmergencyStop():
     landmarks = results.multi_face_landmarks[0]
     self.landmark_list=[]
 
-    """size[0] = h, size[1] = w, size[2] = c"""
+    # size[0] = h, size[1] = w, size[2] = c
     self.size[0], self.size[1], self.size[2] = self.image.shape
 
     for id, xyz_coord in enumerate(landmarks.landmark):
       self.landmark_list.append([id, float(xyz_coord.x*self.size[1]), float(xyz_coord.y*self.size[0]), float(xyz_coord.z*self.size[0])])
       
-      """show landmark number"""
-      #cv2.putText(image, str(id), (int(landmark_list[id][1]), int(landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),1)
+      # show landmark number
+      # cv2.putText(self.image, str(id), (int(self.landmark_list[id][1]), int(self.landmark_list[id][2])), cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0,),2)
 
   def drawing_face_mesh(self, results):
     for face_landmarks in results.multi_face_landmarks:
-      """self.mp_drawing.draw_landmarks(
-          image=self.image,
-          landmark_list=face_landmarks,
-          connections=self.mp_face_mesh.FACEMESH_TESSELATION,
-          landmark_drawing_spec=None,
-          connection_drawing_spec=self.mp_drawing_styles
-          .get_default_face_mesh_tesselation_style())"""
+      #facemesh drawing
+      # self.mp_drawing.draw_landmarks(
+      #     image=self.image,
+      #     landmark_list=face_landmarks,
+      #     connections=self.mp_face_mesh.FACEMESH_TESSELATION,
+      #     landmark_drawing_spec=None,
+      #     connection_drawing_spec=self.mp_drawing_styles
+      #     .get_default_face_mesh_tesselation_style())
       self.mp_drawing.draw_landmarks(
           image=self.image,
           landmark_list=face_landmarks,
@@ -69,13 +78,14 @@ class EmergencyStop():
           landmark_drawing_spec=None,
           connection_drawing_spec=self.mp_drawing_styles
           .get_default_face_mesh_contours_style())
-      self.mp_drawing.draw_landmarks(
-          image=self.image,
-          landmark_list=face_landmarks,
-          connections=self.mp_face_mesh.FACEMESH_IRISES,
-          landmark_drawing_spec=None,
-          connection_drawing_spec=self.mp_drawing_styles
-          .get_default_face_mesh_iris_connections_style())
+      #iris drawing
+      # self.mp_drawing.draw_landmarks(
+      #     image=self.image,
+      #     landmark_list=face_landmarks,
+      #     connections=self.mp_face_mesh.FACEMESH_IRISES,
+      #     landmark_drawing_spec=None,
+      #     connection_drawing_spec=self.mp_drawing_styles
+      #     .get_default_face_mesh_iris_connections_style())
 
   def init_face_eye(self):
     
@@ -103,29 +113,51 @@ class EmergencyStop():
       self.eye.blink_counter() 
     cv2.putText(self.image, "Blink count: {}".format(self.eye.blink_count), (int(0.05*self.size[1]), int(0.1*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 3)
 
+  def sleeping_alert(self):
     if self.eye.is_sleeping():
       cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 10, (0,0,255), 5)
+      return True
+    return False
 
   def _looking_direction(self):
+    # print("value : {}, {}, {}".format(self.eye.right_iris[0], self.eye.right_center, -0.2*self.eye.right_length))
+    # print("type : {}, {}, {}".format(type(self.eye.right_iris[0]), type(self.eye.right_center), type(-0.2*self.eye.right_length)))
     if(self.face.vertical_angle < -20):
       return "Down"
     if(self.face.horizontal_angle < -45) & (self.eye.right_iris[0] < self.eye.right_center[0]):
       return "Left"
     elif(self.face.horizontal_angle > 45) & (self.eye.left_iris[0] > self.eye.left_center[0]):
       return "Right"
+    elif((self.eye.right_iris[0] - self.eye.right_center[0]) < -0.15*self.eye.right_length) & ((self.eye.left_iris[0] - self.eye.left_center[0])< -0.15*self.eye.left_length):
+      return "Left"
+    elif((self.eye.right_iris[0] - self.eye.right_center[0]) > 0.15*self.eye.right_length) & ((self.eye.left_iris[0] - self.eye.left_center[0])> 0.15*self.eye.left_length):
+      return "Right"
+    return "Forward"
 
   def print_looking_direction(self):
-    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.2*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 10, (255,0,255), 5)
+    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.6*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 5, (255,0,255), 5)
+    cv2.circle(self.image, (int(self.eye.right_iris[0]), int(self.eye.right_iris[1])), 3, (255, 0, 255))
+    cv2.circle(self.image, (int(self.eye.left_iris[0]), int(self.eye.left_iris[1])), 3, (255, 0, 255))
+    cv2.circle(self.image, (int(self.eye.right_center[0]), int(self.eye.right_center[1])), 3, (0, 255, 0))
+    cv2.circle(self.image, (int(self.eye.left_center[0]), int(self.eye.left_center[1])), 3, (0, 255, 0))
 
+  def direction_alert(self):
+    if (self._looking_direction != "Forward"):
+      self.direction_array.append(time())
+    else:
+      self.direction_array.clear()
+    if (len(self.direction_array)!=0):
+      if (time()-self.direction_array[0] > self.direction_alert_threshold):
+        cv2.putText(self.image, "!! LOOK FORWARD !!", (int(0.15*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, 10, (0,0,255), 5)
+        return True
+    return False
 
+  async def sleeping_sound(self):
+    self.is_sleeping_sound = True
+    await playsound('sleeping_sound.mp3')
+    self.is_sleeping_sound = False
 
-
-
-
-  # def drawing_eye_direction(self):
-
-  #   self.eye.eye_direction()
-
-  #   cv2.line(self.image, (self.eye.point1[0],self.eye.point1[1]), (self.eye.point2[0], self.eye.point2[1]), (0,0,255), 2, cv2.LINE_4, 0)
-  #   cv2.line(self.image, (self.eye.point3[0],self.eye.point3[1]), (self.eye.point4[0], self.eye.point4[1]), (0,0,255), 2, cv2.LINE_4, 0)
-  #   cv2.line(self.image, (self.eye.point5[0],self.eye.point5[1]), (self.eye.point6[0], self.eye.point6[1]), (255,0,0), 2, cv2.LINE_4, 0)
+  async def direction_sound(self):
+    self.is_sleeping_sound = True
+    await playsound('direction_sound.mp3')
+    self.is_sleeping_sound = False
