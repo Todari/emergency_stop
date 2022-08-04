@@ -155,10 +155,10 @@ class EmergencyStop():
   async def sleeping_sound(self):
     await playsound('sleeping_sound.mp3')
     self.playing_sleeping_sound = False
-    print("sleeping", ES.playing_sleeping_sound)
+    print("sleeping", self.playing_sleeping_sound)
 
 
   async def direction_sound(self):
     await playsound('direction_sound.mp3')
     self.playing_direction_sound = False
-    print("direction", ES.playing_direction_sound)
+    print("direction", self.playing_direction_sound)

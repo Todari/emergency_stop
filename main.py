@@ -1,11 +1,11 @@
 import cv2
 from emergency_stop import EmergencyStop
 from multiprocessing import Process
+import asyncio
+from threading import Thread
 
 ES = EmergencyStop()
 cap = cv2.VideoCapture(0)
-p_sleeping_sound = Process(target=ES.sleeping_sound)
-p_direction_sound = Process(target=ES.direction_sound)
 
 while cap.isOpened():
     success, image = cap.read()
@@ -28,12 +28,11 @@ while cap.isOpened():
         
         if ES.sleeping_alert() & (ES.playing_sleeping_sound==False):
             ES.playing_sleeping_sound = True
-            p_sleeping_sound.start()
-            print("sleeping", ES.playing_sleeping_sound)
         if ES.direction_alert() & (ES.playing_direction_sound==False):
             ES.playing_direction_sound = True
-            p_direction_sound.start()
-            print("direction", ES.playing_direction_sound)
+            # asyncio.run(ES.direction_sound())
+            Thread(target = ES.direction_sound()).start()
+
     
     cv2.imshow("Emergency stop", ES.image)
 
