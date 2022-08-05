@@ -28,10 +28,10 @@ while cap.isOpened():
         
         if ES.sleeping_alert() & (ES.playing_sleeping_sound==False):
             ES.playing_sleeping_sound = True
+            Thread(target = ES.sleeping_sound, args=(), daemon=True).start()
         if ES.direction_alert() & (ES.playing_direction_sound==False):
             ES.playing_direction_sound = True
-            # asyncio.run(ES.direction_sound())
-            Thread(target = ES.direction_sound()).start()
+            Thread(target = ES.direction_sound, args=(), daemon=True).start()
 
     
     cv2.imshow("Emergency stop", ES.image)
