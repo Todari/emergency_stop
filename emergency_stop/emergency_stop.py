@@ -7,6 +7,7 @@ from time import time
 from playsound import playsound
 import threading
 import asyncio
+import math
 
 class EmergencyStop():
 
@@ -98,25 +99,25 @@ class EmergencyStop():
     self.face.face_direction()
     self.face.face_direction2()
 
-    cv2.line(self.image, (self.face.point1[0],self.face.point1[1]), (self.face.point2[0], self.face.point2[1]), (255,0,255), int(0.001*self.size[1]), cv2.LINE_4, 0)
-    cv2.line(self.image, (self.face.point3[0],self.face.point3[1]), (self.face.point4[0], self.face.point4[1]), (255,0,255), int(0.001*self.size[1]), cv2.LINE_4, 0)
-    cv2.putText(self.image, "Horizontal angle : %.2f"%self.face.horizontal_angle, (int(0.05*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.002*self.size[1]), (0,255,0), int(0.002*self.size[1]))
-    cv2.putText(self.image, "Verticalal angle : %.2f"%self.face.vertical_angle, (int(0.05*self.size[1]), int(0.25*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.002*self.size[1]), (0,255,0), int(0.002*self.size[1]))
+    cv2.line(self.image, (self.face.point1[0],self.face.point1[1]), (self.face.point2[0], self.face.point2[1]), (255,0,255), math.ceil(0.001*self.size[1]), cv2.LINE_4, 0)
+    cv2.line(self.image, (self.face.point3[0],self.face.point3[1]), (self.face.point4[0], self.face.point4[1]), (255,0,255), math.ceil(0.001*self.size[1]), cv2.LINE_4, 0)
+    cv2.putText(self.image, "Horizontal angle : %.2f"%self.face.horizontal_angle, (int(0.05*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (0,255,0), math.ceil(0.002*self.size[1]))
+    cv2.putText(self.image, "Verticalal angle : %.2f"%self.face.vertical_angle, (int(0.05*self.size[1]), int(0.25*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (0,255,0), math.ceil(0.002*self.size[1]))
 
   def print_yawn_counter(self):
 
     self.face.yawn_counter()
 
-    cv2.putText(self.image, "Yawn count: {}".format(self.face.yawn_count), (int(0.05*self.size[1]), int(0.15*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.002*self.size[1]), (0,255,0), int(0.002*self.size[1]))
+    cv2.putText(self.image, "Yawn count: {}".format(self.face.yawn_count), (int(0.05*self.size[1]), int(0.15*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (0,255,0), math.ceil(0.002*self.size[1]))
 
   def print_blink_counter(self):
     if(self.face.vertical_angle > -20):
       self.eye.blink_counter() 
-    cv2.putText(self.image, "Blink count: {}".format(self.eye.blink_count), (int(0.05*self.size[1]), int(0.1*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.002*self.size[1]), (0,255,0), int(0.002*self.size[1]))
+    cv2.putText(self.image, "Blink count: {}".format(self.eye.blink_count), (int(0.05*self.size[1]), int(0.1*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (0,255,0), math.ceil(0.002*self.size[1]))
 
   def sleeping_alert(self):
     if self.eye.is_sleeping():
-      cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.005*self.size[1]), (0,0,255), int(0.003*self.size[1]))
+      cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
       return True
     return False
 
@@ -136,11 +137,11 @@ class EmergencyStop():
     return "Forward"
 
   def print_looking_direction(self):
-    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.6*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.003*self.size[1]), (255,0,255), int(0.003*self.size[1]))
-    cv2.circle(self.image, (int(self.eye.right_iris[0]), int(self.eye.right_iris[1])), int(0.003*self.size[1]), (255, 0, 255))
-    cv2.circle(self.image, (int(self.eye.left_iris[0]), int(self.eye.left_iris[1])), int(0.003*self.size[1]), (255, 0, 255))
-    cv2.circle(self.image, (int(self.eye.right_center[0]), int(self.eye.right_center[1])), int(0.003*self.size[1]), (0, 255, 0))
-    cv2.circle(self.image, (int(self.eye.left_center[0]), int(self.eye.left_center[1])), int(0.003*self.size[1]), (0, 255, 0))
+    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.6*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (255,0,255), math.ceil(0.002*self.size[1]))
+    cv2.circle(self.image, (int(self.eye.right_iris[0]), int(self.eye.right_iris[1])), math.ceil(0.003*self.size[1]), (255, 0, 255))
+    cv2.circle(self.image, (int(self.eye.left_iris[0]), int(self.eye.left_iris[1])), math.ceil(0.003*self.size[1]), (255, 0, 255))
+    cv2.circle(self.image, (int(self.eye.right_center[0]), int(self.eye.right_center[1])), math.ceil(0.003*self.size[1]), (0, 255, 0))
+    cv2.circle(self.image, (int(self.eye.left_center[0]), int(self.eye.left_center[1])), math.ceil(0.003*self.size[1]), (0, 255, 0))
 
   def direction_alert(self):
     if (self._looking_direction() != "Forward"):
@@ -149,7 +150,7 @@ class EmergencyStop():
       self.direction_array.clear()
     if (len(self.direction_array)!=0):
       if (time()-self.direction_array[0] > self.direction_alert_threshold):
-        cv2.putText(self.image, "!! LOOK FORWARD !!", (int(0.15*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, int(0.005*self.size[1]), (0,0,255), int(0.003*self.size[1]))
+        cv2.putText(self.image, "!! LOOK FORWARD !!", (int(0.15*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
         return True
     return False
 
