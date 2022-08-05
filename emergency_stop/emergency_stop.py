@@ -117,7 +117,7 @@ class EmergencyStop():
 
   def sleeping_alert(self):
     if self.eye.is_sleeping():
-      cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
+      cv2.putText(self.image, "!! WAKE UP !!", (int(0.2*self.size[1]), int(0.7*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
       return True
     return False
 
@@ -137,7 +137,7 @@ class EmergencyStop():
     return "Forward"
 
   def print_looking_direction(self):
-    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.6*self.size[1]), int(0.2*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (255,0,255), math.ceil(0.002*self.size[1]))
+    cv2.putText(self.image, "Looking {}".format(self._looking_direction()), (int(0.05*self.size[1]), int(0.85*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.002*self.size[1]), (255,0,255), math.ceil(0.002*self.size[1]))
     cv2.circle(self.image, (int(self.eye.right_iris[0]), int(self.eye.right_iris[1])), math.ceil(0.003*self.size[1]), (255, 0, 255))
     cv2.circle(self.image, (int(self.eye.left_iris[0]), int(self.eye.left_iris[1])), math.ceil(0.003*self.size[1]), (255, 0, 255))
     cv2.circle(self.image, (int(self.eye.right_center[0]), int(self.eye.right_center[1])), math.ceil(0.003*self.size[1]), (0, 255, 0))
@@ -150,7 +150,7 @@ class EmergencyStop():
       self.direction_array.clear()
     if (len(self.direction_array)!=0):
       if (time()-self.direction_array[0] > self.direction_alert_threshold):
-        cv2.putText(self.image, "!! LOOK FORWARD !!", (int(0.15*self.size[1]), int(0.8*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
+        cv2.putText(self.image, "!! LOOK FORWARD !!", (int(0.15*self.size[1]), int(0.7*self.size[0])), cv2.FONT_HERSHEY_PLAIN, math.ceil(0.005*self.size[1]), (0,0,255), math.ceil(0.003*self.size[1]))
         return True
     return False
 
