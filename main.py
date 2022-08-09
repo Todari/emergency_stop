@@ -10,7 +10,7 @@ cap = cv2.VideoCapture(0)
 while cap.isOpened():
     success, image = cap.read()
     if not success:
-        print("카메라가 인식되지 않습니다.")
+        print("cannot detect camera")
         continue
 
     ES.init(image)
